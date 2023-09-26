@@ -10,6 +10,7 @@ execute pathogen#infect()
 
 " Enable syntax highlighting
 syntax on
+colorscheme sorbet
 
 " Tabs and shifting are 4 spaces wide
 set tabstop=4
@@ -23,7 +24,13 @@ map <ScrollWheelUp> k
 map <ScrollWheelDown> j
 
 " Share clipboards between sessions
-set clipboard=unnamed
+set clipboard=unnamedplus
+
+" Set cursor for each mode
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+
+set autoindent
 
 " For LightLine.vim plugin
 " Display Lightline
@@ -75,3 +82,7 @@ let g:syntastic_check_on_wq = 1
 let g:syntastic_loc_list_height = 5
 " Ignore notes documents
 let g:syntastic_ignore_files = ['bash_notes.sh', 'cs265_notes.txt']
+" Ignore specific file types
+let g:syntastic_mode_map = {
+	\ "mode": "active",
+	\ "passive_filetypes": ["asm"] }
