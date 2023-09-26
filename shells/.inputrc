@@ -1,9 +1,3 @@
 set completion-ignore-case On
 set show-all-if-ambiguous On
 TAB: menu-complete
-
-# Show VIM editor mode before prompt
-set show-mode-in-prompt On
-# Custom VIM mode prompts
-set vi-ins-mode-string "\e[01;92mINS "
-set vi-cmd-mode-string "\e[01;96mNOR "
