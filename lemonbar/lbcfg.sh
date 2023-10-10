@@ -31,8 +31,9 @@ CPU() {
 
 RAM() {
 	RamLoad=$(free | grep Mem: | awk '{printf "%5.1f", (100 * $3 / $2)}')
+	RamUsed=$(free -m | grep Mem: | awk '{printf "%5.2fGB", ($3 / 1024)}')
 
-	echo "RAM: $RamLoad%%"
+	echo "RAM: $RamLoad%% / $RamUsed"
 }
 
 GPU() {
@@ -52,7 +53,7 @@ Volume() {
 while true; do
 	bar="%{c} $(Clock) %{r} $(CPU)    $(RAM)    $(GPU)    $(Volume) "
 	out=""
-	monitors=$(xrandr | grep -oE "^(DP|HDMI).* connected" | sed "s/ connected//")
+	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
 	for m in $(echo "$monitors") ; do
 		out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
 	done
