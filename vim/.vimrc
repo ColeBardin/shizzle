@@ -8,16 +8,14 @@
 " Enable Pathogen package manager
 execute pathogen#infect()
 
-" Enable syntax highlighting
+set number
 syntax on
 colorscheme sorbet
-
-" Tabs and shifting are 4 spaces wide
+set autoindent
 set tabstop=4
 set shiftwidth=4
+set expandtab
 
-" Enable line numbers
-set number
 " Enable mouse scrolling
 set mouse=a
 map <ScrollWheelUp> k
@@ -30,8 +28,6 @@ set clipboard=unnamedplus
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 
-set autoindent
-
 " For LightLine.vim plugin
 " Display Lightline
 set laststatus=2
@@ -39,15 +35,15 @@ set laststatus=2
 set noshowmode
 " Custom line
 let g:lightline = {
-	\ 'colorscheme': 'powerline',
-	\ 'active': {
-	\   'left': [ [ 'mode', 'paste' ],
-	\             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-	\ },
-	\ 'component_function': {
-	\   'gitbranch': 'FugitiveHead'
-	\ },
-	\ }
+    \ 'colorscheme': 'powerline',
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+    \ },
+    \ 'component_function': {
+    \   'gitbranch': 'FugitiveHead'
+    \ },
+    \ }
 
 
 " NERDTree Configuration
@@ -84,5 +80,5 @@ let g:syntastic_loc_list_height = 5
 let g:syntastic_ignore_files = ['bash_notes.sh', 'cs265_notes.txt']
 " Ignore specific file types
 let g:syntastic_mode_map = {
-	\ "mode": "active",
-	\ "passive_filetypes": ["asm"] }
+    \ "mode": "active",
+    \ "passive_filetypes": ["asm"] }
