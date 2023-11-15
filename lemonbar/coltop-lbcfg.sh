@@ -44,8 +44,8 @@ RAM() {
 }
 
 GPU() {
-	GpuTemp=$(nvidia-smi -a | grep "GPU Current Temp" | awk '{printf "%4.1f°C", $5}')
-	GpuLoad=$(nvidia-smi -a | grep "Gpu" | awk '{printf "%5.1f", $3}')
+	GpuTemp=$(sensors | grep edge | awk '{printf "%3.1f", substr($2, 2, length($2))}')
+	GpuLoad=$(cat /sys/class/drm/card1/device/gpu_busy_percent)
 	
 	echo "GPU: $GpuLoad%% / $GpuTemp"
 }
@@ -105,7 +105,7 @@ Internet() {
 
 # Bar
 while true; do
-	bar="%{c} $(Clock) %{r} $(Internet)    $(CPU)    $(RAM)    $(Brightness)    $(Volume)    $(Battery)"
+	bar="%{c} $(Clock) %{r} $(Internet)    $(CPU)    $(GPU)    $(RAM)    $(Brightness)    $(Volume)    $(Battery)"
 	out=""
 	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
 	for m in $(echo "$monitors") ; do
