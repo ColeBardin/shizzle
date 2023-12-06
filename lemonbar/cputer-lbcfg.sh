@@ -1,5 +1,12 @@
 #!/bin/sh
 
+bg="#102114"
+fg="#dbdbdb"
+bad="#ff0000"
+med="#ffcd05"
+good="#00ff08"
+neut="#0390fc"
+
 WS() {
 	ws=$(i3-msg -t get_workspaces)
 	nums=$(echo $ws | jq -r '.[].name' | sort -n)
@@ -8,7 +15,7 @@ WS() {
 	out=""
 	for n in $(echo "$nums") ; do
 		if [ "$n" = "$cur" ] ; then
-			out+="[$n]"
+			out+="%{F$neut}[$n]%{F$fg}"
 		else
 			out+=" $n "
 		fi
@@ -44,14 +51,40 @@ GPU() {
 }
 
 Volume() {
+	Mute=$(amixer sget Master | grep "Front Left:" | awk '{print $6}')
 	Vol=$(amixer sget Master | grep "Front Left:" | awk '{printf "%4s", substr($5, 2, length($5)-2)}')
+
+	if [ $Mute = "[off]" ] ; then
+		Vol="%{F$med}MUTE%{F$fg}"
+	fi
 
 	echo "Vol: $Vol"
 }
 
+Internet() {
+	Con=$(nmcli dev status | grep -E "\b(wifi|ethernet)\b.*\bconnected\b")
+
+	if [ -z "$Con" ] ; then
+		Int="wifi"
+		SSID="DISCONNECTED"
+		Col=$bad
+	else
+		Int=$(echo $Con | awk '{print $2}')
+		SSID=$(echo $Con | awk '{print $4}')
+		Col=$good
+
+		if [ $Int = "ethernet" ] ; then
+			Int="Eth"
+			Col=$med
+		fi
+	fi
+
+	echo "%{F$Col}$Int:%{F$fg} $SSID"
+}
+
 # Bar
 while true; do
-	bar="%{c} $(Clock) %{r} $(CPU)    $(RAM)    $(GPU)    $(Volume) "
+	bar="%{c} $(Clock) %{r} $(Internet)    $(CPU)    $(RAM)    $(GPU)    $(Volume) "
 	out=""
 	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
 	for m in $(echo "$monitors") ; do
@@ -59,4 +92,4 @@ while true; do
 	done
 	echo "$out"
 	sleep 0.2
-done | lemonbar -g "x25++" -B "#102114" -F "#dbdbdb"
+done | lemonbar -g "x25++" -B "$bg" -F "$fb"
