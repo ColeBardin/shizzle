@@ -59,7 +59,7 @@ fi
 if [ "$color_prompt" = yes ]; then
     PS1='\[\033[01;35m\]\u@\h\[\033[00m\] \[\033[01;33m\]\w \[\033[01;36m\]$(git_branch)\[\033[00m\]\$ '
 else
-    PS1='\u@\h \w \$ '
+    PS1='\u@\h \w $(git_branch)\$ '
 fi
 unset color_prompt force_color_prompt
 
