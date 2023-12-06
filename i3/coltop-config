@@ -196,9 +196,12 @@ bindsym $mod+r mode "resize"
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl s 5%+ 
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl s 5%-
 # Volume Control Keys
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer -c 1 sset Master 4%-
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -c 1 sset Master 4%+
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer -c 1 sset Master 5%-
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -c 1 sset Master 5%+
 bindsym XF86AudioMute exec --no-startup-id /usr/local/bin/mute
+
+# Border config
+default_border pixel 1
 
 # Start lemonbar
 exec sh ~/.config/lemonbar/lbcfg.sh
