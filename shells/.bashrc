@@ -2,6 +2,12 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# Git branch detection
+git_branch() {
+    branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')
+    if [ "$branch" != "" ]; then echo "$branch "; fi
+}
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -51,7 +57,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;35m\]\u@\h\[\033[00m\] \[\033[01;33m\]\w\[\033[00m\] \$ '
+    PS1='\[\033[01;35m\]\u@\h\[\033[00m\] \[\033[01;33m\]\w \[\033[01;36m\]$(git_branch)\[\033[00m\]\$ '
 else
     PS1='\u@\h \w \$ '
 fi
