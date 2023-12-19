@@ -61,7 +61,7 @@ Volume() {
 	echo "Vol: $Vol"
 }
 
-Internet() {
+Network() {
 	Con=$(nmcli dev status | grep -E "\b(wifi|ethernet)\b.*\bconnected\b")
 
 	if [ -z "$Con" ] ; then
@@ -77,14 +77,20 @@ Internet() {
 			Int="Eth"
 			Col=$med
 		fi
+
+        if [ ! -z "$(nordvpn status | grep  "Status: Connected")" ]; then
+            VPN=" (%{F$neut}VPN%{F$fg})"
+        else
+            VPN=""
+        fi
 	fi
 
-	echo "%{F$Col}$Int:%{F$fg} $SSID"
+	echo "%{F$Col}$Int:%{F$fg} $SSID$VPN"
 }
 
 # Bar
 while true; do
-	bar="%{c} $(Clock) %{r} $(Internet)    $(CPU)    $(RAM)    $(GPU)    $(Volume) "
+	bar="%{c} $(Clock) %{r} $(Network)    $(CPU)    $(RAM)    $(GPU)    $(Volume) "
 	out=""
 	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
 	for m in $(echo "$monitors") ; do
