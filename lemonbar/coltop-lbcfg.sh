@@ -8,109 +8,115 @@ good="#00ff08"
 neut="#0390fc"
 
 WS() {
-	ws=$(i3-msg -t get_workspaces)
-	nums=$(echo $ws | jq -r '.[].name' | sort -n)
-	cur=$(echo $ws | jq -r --arg mon "$1" '.[] | select(.visible == true and .output == $mon) | .name')
+    ws=$(i3-msg -t get_workspaces)
+    nums=$(echo $ws | jq -r '.[].name' | sort -n)
+    cur=$(echo $ws | jq -r --arg mon "$1" '.[] | select(.visible == true and .output == $mon) | .name')
 
-	out="" 
-	for n in $(echo "$nums") ; do 
-		if [ "$n" = "$cur" ] ; 
-			then out+="%{F$neut}[$n]%{F$fg}"
-		else
-			out+=" $n "
-		fi
-	done
-	echo "$1: $out"
+    out="" 
+    for n in $(echo "$nums") ; do 
+        if [ "$n" = "$cur" ] ; 
+            then out+="%{F$neut}[$n]%{F$fg}"
+        else
+            out+=" $n "
+        fi
+    done
+    echo "$1: $out"
 }
 
 Clock() {
-	DATETIME=$(date "+%a %b %d, %H:%M")
+    DATETIME=$(date "+%a %b %d, %H:%M")
 
-	echo "$DATETIME"
+    echo "$DATETIME"
 }
 
 CPU() {
-	CpuTemp=$(sensors | grep Tctl | awk '{printf "%6s", substr($2, 2, length($2)-1)}')
-	CpuLoad=$(top -n1 | grep %Cpu | awk '{printf "%5.1f", $2}')
+    CpuTemp=$(sensors | grep Tctl | awk '{printf "%6s", substr($2, 2, length($2)-1)}')
+    CpuLoad=$(top -n1 | grep %Cpu | awk '{printf "%5.1f", $2}')
 
-	echo "CPU: $CpuLoad%% / $CpuTemp"
+    echo "CPU: $CpuLoad%% / $CpuTemp"
 }
 
 RAM() {
-	RamLoad=$(free | grep Mem: | awk '{printf "%5.1f", (100 * $3 / $2)}')
-	RamUsed=$(free -m | grep Mem: | awk '{printf "%5.2fGB", ($3 / 1024)}')
+    RamLoad=$(free | grep Mem: | awk '{printf "%5.1f", (100 * $3 / $2)}')
+    RamUsed=$(free -m | grep Mem: | awk '{printf "%5.2fGB", ($3 / 1024)}')
 
-	echo "RAM: $RamLoad%% / $RamUsed"
+    echo "RAM: $RamLoad%% / $RamUsed"
 }
 
 GPU() {
-	GpuTemp=$(sensors | grep edge | awk '{printf "%3.1f", substr($2, 2, length($2))}')
-	GpuLoad=$(cat /sys/class/drm/card1/device/gpu_busy_percent)
-	
-	echo "GPU: $GpuLoad%% / $GpuTemp"
+    GpuTemp=$(sensors | grep edge | awk '{printf "%3.1f", substr($2, 2, length($2))}')
+    GpuLoad=$(cat /sys/class/drm/card1/device/gpu_busy_percent)
+    
+    echo "GPU: $GpuLoad%% / $GpuTemp"
 }
 
 Volume() {
-	Mute="$(amixer -c 1 sget Master | grep "Mono: Playback" | awk '{print $6}')"
-	Vol=$(amixer -c 1 sget Master | grep "Mono: Playback" | awk '{printf "%4s", substr($4, 2, length($4)-2)}')
+    Mute="$(amixer -c 1 sget Master | grep "Mono: Playback" | awk '{print $6}')"
+    Vol=$(amixer -c 1 sget Master | grep "Mono: Playback" | awk '{printf "%4s", substr($4, 2, length($4)-2)}')
 
-	if [ $Mute = "[off]" ] ; then
-		Vol="%{F$med}MUTE%{F$fg}"	
-	fi
+    if [ $Mute = "[off]" ] ; then
+        Vol="%{F$med}MUTE%{F$fg}"   
+    fi
 
-	echo "Vol: $Vol"
+    echo "Vol: $Vol"
 
 }
 
 Battery() {
-	Crg=$(acpi --battery | awk '{printf "%s", substr($3, 1, length($3)-1)}')
-	Bat=$(acpi --battery | grep -oE "...%" | head -c-1)
+    Crg=$(acpi --battery | awk '{printf "%s", substr($3, 1, length($3)-1)}')
+    Bat=$(acpi --battery | grep -oE "...%" | head -c-1)
 
-	if [ "$Crg" = "Discharging" ] ; then
-		Crg="__"
-		CrgColor=$bad
-	else
-		Crg="~~"
-		CrgColor=$good
-	fi
-	echo "Bat: $Bat%%{F$CrgColor}$Crg%{F$fg}"
+    if [ "$Crg" = "Discharging" ] ; then
+        Crg="__"
+        CrgColor=$bad
+    else
+        Crg="~~"
+        CrgColor=$good
+    fi
+    echo "Bat: $Bat%%{F$CrgColor}$Crg%{F$fg}"
 }
 
 Brightness() {
-	Bright=$(brightnessctl g | awk '{printf "%3d", 100 * $1 / 255}')
+    Bright=$(brightnessctl g | awk '{printf "%3d", 100 * $1 / 255}')
 
-	echo "Bright: $Bright%%"
+    echo "Bright: $Bright%%"
 }
 
-Internet() {
-	Con=$(nmcli dev status | grep -E "\b(wifi|ethernet)\b.*\bconnected\b")
+Network() {
+    Con=$(nmcli dev status | grep -E "\b(wifi|ethernet)\b.*\bconnected\b")
 
-	if [ -z "$Con" ] ; then
-		Int="wifi"
-		SSID="DISCONNECTED"
-		Col=$bad
-	else 
-		Int=$(echo $Con | awk '{print $2}')
-		SSID=$(echo $Con | awk '{print $4}')
-		Col=$good
+    if [ -z "$Con" ] ; then
+        Int="wifi"
+        SSID="DISCONNECTED"
+        Col=$bad
+    else 
+        Int=$(echo $Con | awk '{print $2}')
+        SSID=$(echo $Con | awk '{print $4}')
+        Col=$good
 
-		if [ $Int = "ethernet" ] ; then
-			Int="Eth"
-			Col=$med
-		fi
-	fi
+        if [ $Int = "ethernet" ] ; then
+            Int="Eth"
+            Col=$med
+        fi
 
-	echo "%{F$Col}$Int:%{F$fg} $SSID"
+        if [ ! -z "$(nordvpn status | grep  "Status: Connected")" ]; then
+            VPN=" (%{F$neut}VPN%{F$fg})"
+        else
+            VPN=""
+        fi
+    fi
+
+    echo "%{F$Col}$Int:%{F$fg} $SSID$VPN"
 }
 
 # Bar
 while true; do
-	bar="%{c} $(Clock) %{r} $(Internet)    $(CPU)    $(GPU)    $(RAM)    $(Brightness)    $(Volume)    $(Battery)"
-	out=""
-	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
-	for m in $(echo "$monitors") ; do
-		out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
-	done
-	echo "$out"
-	sleep 0.1
+    bar="%{c} $(Clock) %{r} $(Network)    $(CPU)    $(GPU)    $(RAM)    $(Brightness)    $(Volume)    $(Battery)"
+    out=""
+    monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
+    for m in $(echo "$monitors") ; do
+        out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
+    done
+    echo "$out"
+    sleep 0.1
 done | lemonbar -g "x25++" -B "$bg" -F "$fg"
