@@ -54,7 +54,7 @@ Volume() {
     Mute=$(pactl get-sink-mute @DEFAULT_SINK@)
     Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print $5}')
 
-	if [ "$Mute" = "Mute: no" ] ; then
+	if [ "$Mute" = "Mute: yes" ] ; then
 		Vol="%{F$med}MUTE%{F$fg}"
 	fi
 
