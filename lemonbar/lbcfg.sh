@@ -91,8 +91,7 @@ Brightness() {
     if [ "$HOSTNAME" = "$laptop" ]; then
         Bright=$(brightnessctl g | awk '{printf "%3d", 100 * $1 / 255}')
     else
-        # TODO: brightness on cputer
-        Bright="On"  
+        Bright=$(/usr/local/bin/bright)
     fi
 
     echo "$gap Bright: $Bright%%"
@@ -135,5 +134,5 @@ while true; do
 		out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
 	done
 	echo "$out"
-	sleep 0.2
+	sleep 0.5
 done | lemonbar -g "x25++" -B "$bg" -F "$fb"
