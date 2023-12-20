@@ -7,6 +7,11 @@ med="#ffcd05"
 good="#00ff08"
 neut="#0390fc"
 
+gap="   "
+
+desktop="cputer"
+laptop="coltop"
+
 WS() {
 	ws=$(i3-msg -t get_workspaces)
 	nums=$(echo $ws | jq -r '.[].name' | sort -n)
@@ -33,21 +38,26 @@ CPU() {
 	CpuTemp=$(sensors | grep Tctl | awk '{printf "%6s", substr($2, 2, length($2)-1)}')
 	CpuLoad=$(top -n1 | grep %Cpu | awk '{printf "%5.1f", $2}')
 
-	echo "CPU: $CpuLoad%% / $CpuTemp"
+	echo "$gap CPU: $CpuLoad%% / $CpuTemp"
 }
 
 RAM() {
 	RamLoad=$(free | grep Mem: | awk '{printf "%5.1f", (100 * $3 / $2)}')
 	RamUsed=$(free -m | grep Mem: | awk '{printf "%5.2fGB", ($3 / 1024)}')
 
-	echo "RAM: $RamLoad%% / $RamUsed"
+	echo "$gap RAM: $RamLoad%% / $RamUsed"
 }
 
 GPU() {
-	GpuTemp=$(nvidia-smi -a | grep "GPU Current Temp" | awk '{printf "%4.1f°C", $5}')
-	GpuLoad=$(nvidia-smi -a | grep "Gpu" | awk '{printf "%5.1f", $3}')
+    if [ "$HOSTNAME" = "$laptop" ]; then
+        GpuTemp=$(sensors | grep edge | awk '{printf "%3.1f", substr($2, 2, length($2))}')
+        GpuLoad=$(cat /sys/class/drm/card1/device/gpu_busy_percent)
+    else
+        GpuTemp=$(nvidia-smi -a | grep "GPU Current Temp" | awk '{printf "%4.1f°C", $5}')
+        GpuLoad=$(nvidia-smi -a | grep "Gpu" | awk '{printf "%5.1f", $3}')
+    fi
 	
-	echo "GPU: $GpuLoad%% / $GpuTemp"
+	echo "$gap GPU: $GpuLoad%% / $GpuTemp"
 }
 
 Volume() {
@@ -58,7 +68,34 @@ Volume() {
 		Vol="%{F$med}MUTE%{F$fg}"
 	fi
 
-	echo "Vol: $Vol"
+	echo "$gap Vol: $Vol"
+}
+
+Battery() {
+    if [ "$HOSTNAME" = "$laptop" ]; then
+        Crg=$(acpi --battery | awk '{printf "%s", substr($3, 1, length($3)-1)}')
+        Bat=$(acpi --battery | grep -oE "...%" | head -c-1)
+
+        if [ "$Crg" = "Discharging" ] ; then
+            Crg="__"
+            CrgColor=$bad
+        else
+            Crg="~~"
+            CrgColor=$good
+        fi
+        echo "$gap Bat: $Bat%%{F$CrgColor}$Crg%{F$fg}"
+    fi
+}
+
+Brightness() {
+    if [ "$HOSTNAME" = "$laptop" ]; then
+        Bright=$(brightnessctl g | awk '{printf "%3d", 100 * $1 / 255}')
+    else
+        # TODO: brightness on cputer
+        Bright="On"  
+    fi
+
+    echo "$gap Bright: $Bright%%"
 }
 
 Network() {
@@ -86,12 +123,12 @@ Network() {
         fi
 	fi
 
-	echo "%{F$Col}$Int:%{F$fg} $SSID$VPN"
+	echo "$gap %{F$Col}$Int:%{F$fg} $SSID$VPN"
 }
 
 # Bar
 while true; do
-	bar="%{c} $(Clock) %{r} $(Network)    $(CPU)    $(RAM)    $(GPU)    $(Volume) "
+	bar="%{c} $(Clock) %{r}$(Network)$(CPU)$(RAM)$(GPU)$(Brightness)$(Volume)$(Battery) "
 	out=""
 	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
 	for m in $(echo "$monitors") ; do
