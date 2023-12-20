@@ -51,10 +51,10 @@ GPU() {
 }
 
 Volume() {
-	Mute=$(amixer sget Master | grep "Front Left:" | awk '{print $6}')
-	Vol=$(amixer sget Master | grep "Front Left:" | awk '{printf "%4s", substr($5, 2, length($5)-2)}')
+    Mute=$(pactl get-sink-mute @DEFAULT_SINK@)
+    Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print $5}')
 
-	if [ $Mute = "[off]" ] ; then
+	if [ $Mute = "Mute: no" ] ; then
 		Vol="%{F$med}MUTE%{F$fg}"
 	fi
 
@@ -68,6 +68,7 @@ Network() {
 		Int="wifi"
 		SSID="DISCONNECTED"
 		Col=$bad
+        VPN=""
 	else
 		Int=$(echo $Con | awk '{print $2}')
 		SSID=$(echo $Con | awk '{print $4}')

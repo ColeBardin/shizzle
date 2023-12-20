@@ -51,10 +51,10 @@ GPU() {
 }
 
 Volume() {
-    Mute="$(amixer -c 1 sget Master | grep "Mono: Playback" | awk '{print $6}')"
-    Vol=$(amixer -c 1 sget Master | grep "Mono: Playback" | awk '{printf "%4s", substr($4, 2, length($4)-2)}')
+    Mute=$(pactl get-sink-mute @DEFAULT_SINK@)
+    Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print $5}')
 
-    if [ $Mute = "[off]" ] ; then
+	if [ $Mute = "Mute: no" ] ; then
         Vol="%{F$med}MUTE%{F$fg}"   
     fi
 
