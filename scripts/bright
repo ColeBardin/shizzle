@@ -7,8 +7,9 @@ if [ $# -gt 1 ] ; then
 fi
 
 if [ $# -eq 0 ] ; then
-    ddcutil getvcp 10 | awk '{print substr($9, 1, length($9)-1)}' 
+    Lvl=$(ddcutil getvcp 10 | grep Brightness | awk '{print substr($9, 1, length($9)-1)}')
+    echo $Lvl
 else
-    ddcutil setvcp --display 2 10 "$1"
-    ddcutil setvcp --display 1 10 "$1"
+    ddcutil setvcp --display 2 10 "$1" 1> /dev/null
+    ddcutil setvcp --display 1 10 "$1" 1> /dev/null
 fi
