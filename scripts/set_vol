@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# != 1 ]; then
+    echo "Missing argument"
+    echo "Usage: set_vol <vol>"
+    exit 1
+fi
+
+Mute=$(pactl get-sink-mute @DEFAULT_SINK@)
+if [ "$Mute" = "Mute: yes" ]; then
+    pactl set-sink-mute @DEFAULT_SINK@ toggle
+fi
+
+pactl set-sink-volume @DEFAULT_SINK@ $1

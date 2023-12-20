@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ $# -gt 1 ] ; then
+    echo "Error: Too many arguments"
+    echo "Usage: bright percent"
+    exit
+fi
+
+if [ $# -eq 0 ] ; then
+    ddcutil getvcp 10 | awk '{print substr($9, 1, length($9)-1)}' 
+else
+    ddcutil setvcp --display 2 10 "$1"
+    ddcutil setvcp --display 1 10 "$1"
+fi
