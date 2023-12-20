@@ -52,7 +52,7 @@ GPU() {
 
 Volume() {
     Mute=$(pactl get-sink-mute @DEFAULT_SINK@)
-    Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print $5}')
+    Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{printf "%3d", $5}')%
 
 	if [ "$Mute" = "Mute: yes" ] ; then
 		Vol="%{F$med}MUTE%{F$fg}"
