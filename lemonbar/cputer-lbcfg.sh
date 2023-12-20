@@ -81,7 +81,7 @@ Network() {
         if [ ! -z "$(nordvpn status | grep  "Status: Connected")" ]; then
             VPN=" (%{F$neut}VPN%{F$fg})"
         else
-            VPN=""
+            VPN=" (%{F$bad}VPN%{F$fg})"
         fi
 	fi
 
