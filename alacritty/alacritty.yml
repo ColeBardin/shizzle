@@ -39,10 +39,9 @@ font:
 
   bold_italic:
     family: monospace
-
     style: Bold Italic
 
-  size: 9.0
+  size: 8.0
 
   #offset:
   #  x: 0
