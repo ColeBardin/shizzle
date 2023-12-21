@@ -91,7 +91,7 @@ Brightness() {
     if [ "$HOSTNAME" = "$laptop" ]; then
         Bright=$(brightnessctl g | awk '{printf "%3d", 100 * $1 / 255}')
     else
-        Bright=$(/usr/local/bin/bright)
+        Bright=$(/usr/local/bin/bright | awk '{printf "%3d", $1}')
     fi
 
     echo "$gap Bright: $Bright%%"
