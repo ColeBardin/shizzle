@@ -1,15 +1,28 @@
 #!/bin/sh
 
+TMP="/tmp/bright"
+
+update_tmp() {
+    Read=$(ddcutil getvcp 10 --bus 11 --sleep-multiplier 0.1 --async | grep Brightness | awk '{print substr($9, 1, length($9)-1)}')
+    echo $Read > $TMP
+}
+
 if [ $# -gt 1 ] ; then
     echo "Error: Too many arguments"
     echo "Usage: bright percent"
     exit
 fi
 
+
 if [ $# -eq 0 ] ; then
-    Lvl=$(ddcutil getvcp 10 --bus 11 --sleep-multiplier 0.1 --async | grep Brightness | awk '{print substr($9, 1, length($9)-1)}')
-    echo $Lvl
+    if [ ! -f "$TMP" ]; then
+        update_tmp
+    fi
+
+    cat $TMP
 else
-    ddcutil setvcp --bus 12 --sleep-multiplier 0.1 --async 10 "$1" 1> /dev/null
-    ddcutil setvcp --bus 11 --sleep-multiplier 0.1 --async 10 "$1" 1> /dev/null
+    ddcutil setvcp --display 2 --sleep-multiplier 0.1 --async 10 "$1" 1> /dev/null
+    ddcutil setvcp --display 1 --sleep-multiplier 0.1 --async 10 "$1" 1> /dev/null
+    update_tmp &
 fi
+
