@@ -208,6 +208,7 @@ bindsym $Mod+r mode "resize"
 
 # Border config
 default_border pixel 1
+client.focused          #9a57a2 #5b2c61 #ffffff #5b2c61 #6e2871
 
 # Bind Brightness Keys
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl s 2%+ 
