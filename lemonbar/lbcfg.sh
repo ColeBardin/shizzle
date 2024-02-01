@@ -50,8 +50,8 @@ RAM() {
 
 GPU() {
     if [ "$HOSTNAME" = "$laptop" ]; then
-        GpuTemp=$(sensors | grep edge | awk '{printf "%3.1f", substr($2, 2, length($2))}')
-        GpuLoad=$(cat /sys/class/drm/card1/device/gpu_busy_percent)
+        GpuTemp=$(sensors | grep edge | awk '{printf "%3.1f°C", substr($2, 2, length($2))}')
+        GpuLoad=$(cat /sys/class/drm/card1/device/gpu_busy_percent | awk '{printf "%5.1f", $1}')
     else
         GpuTemp=$(nvidia-smi -a | grep "GPU Current Temp" | awk '{printf "%4.1f°C", $5}')
         GpuLoad=$(nvidia-smi -a | grep "Gpu" | awk '{printf "%5.1f", $3}')
