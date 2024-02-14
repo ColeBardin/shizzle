@@ -1,9 +1,10 @@
 #!/bin/sh
 
+BRIGHT_ID=10
 TMP="/tmp/bright"
 
 update_tmp() {
-    Read=$(ddcutil getvcp 10 --bus 11 --sleep-multiplier 0.1 --async | grep Brightness | awk '{print substr($9, 1, length($9)-1)}')
+    Read=$(ddcutil getvcp $BRIGHT_ID --bus 11 --sleep-multiplier 0.1 --skip-ddc-checks | grep Brightness | awk '{print substr($9, 1, length($9)-1)}')
     echo $Read > $TMP
 }
 
@@ -25,8 +26,9 @@ if [ $# -eq 0 ] ; then
 
     cat $TMP
 else
-    ddcutil setvcp --display 2 --sleep-multiplier 0.1 --async 10 "$1" 1> /dev/null
-    ddcutil setvcp --display 1 --sleep-multiplier 0.1 --async 10 "$1" 1> /dev/null
+    ddcutil setvcp --display 2 --sleep-multiplier 0.1 --skip-ddc-checks $BRIGHT_ID "$1" 1> /dev/null
+    ddcutil setvcp --display 1 --sleep-multiplier 0.1 --skip-ddc-checks $BRIGHT_ID "$1" 1> /dev/null
+
     update_tmp &
 fi
 
