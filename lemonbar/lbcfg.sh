@@ -7,45 +7,45 @@ med="#ffcd05"
 good="#00ff08"
 neut="#0390fc"
 
-gap="   "
+gap="  "
 
 desktop="cputer"
 laptop="coltop"
 
 WS() {
-	ws=$(i3-msg -t get_workspaces)
-	nums=$(echo $ws | jq -r '.[].name' | sort -n)
-	cur=$(echo $ws | jq -r --arg mon "$1" '.[] | select(.visible == true and .output == $mon) | .name')
+    ws=$(i3-msg -t get_workspaces)
+    nums=$(echo $ws | jq -r '.[].name' | sort -n)
+    cur=$(echo $ws | jq -r --arg mon "$1" '.[] | select(.visible == true and .output == $mon) | .name')
 
-	out=""
-	for n in $(echo "$nums") ; do
-		if [ "$n" = "$cur" ] ; then
-			out+="%{F$neut}[$n]%{F$fg}"
-		else
-			out+=" $n "
-		fi
-	done
-	echo "$1: $out"
+    out=""
+    for n in $(echo "$nums") ; do
+        if [ "$n" = "$cur" ] ; then
+            out+="%{F$neut}[$n]%{F$fg}"
+        else
+            out+=" $n "
+        fi
+    done
+    echo "$1: $out"
 }
 
 Clock() {
-	DATETIME=$(date "+%a %b %d, %H:%M")
+    DATETIME=$(date "+%a %b %d, %H:%M")
 
-	echo "$DATETIME"
+    echo "$DATETIME"
 }
 
 CPU() {
-	CpuTemp=$(sensors | grep Tctl | awk '{printf "%6s", substr($2, 2, length($2)-1)}')
-	CpuLoad=$(top -n1 | grep %Cpu | awk '{printf "%5.1f", $2}')
+    CpuLoad=$(top -n 1 | grep "Cpu(s)" | awk '{printf "%5.1f", $2}')
+    CpuTemp=$(sensors | grep "Tctl" | awk '{printf "%6s", substr($2, 2, length($2)-1)}')
 
-	echo "$gap CPU: $CpuLoad%% / $CpuTemp"
+    echo "$gap CPU: $CpuLoad%% / $CpuTemp"
 }
 
 RAM() {
-	RamLoad=$(free | grep Mem: | awk '{printf "%5.1f", (100 * $3 / $2)}')
-	RamUsed=$(free -m | grep Mem: | awk '{printf "%5.2fGB", ($3 / 1024)}')
+    RamLoad=$(free | grep Mem: | awk '{printf "%5.1f", (100 * $3 / $2)}')
+    RamUsed=$(free -m | grep Mem: | awk '{printf "%5.2fGB", ($3 / 1024)}')
 
-	echo "$gap RAM: $RamLoad%% / $RamUsed"
+    echo "$gap RAM: $RamLoad%% / $RamUsed"
 }
 
 GPU() {
@@ -56,19 +56,19 @@ GPU() {
         GpuTemp=$(nvidia-smi -a | grep "GPU Current Temp" | awk '{printf "%4.1f°C", $5}')
         GpuLoad=$(nvidia-smi -a | grep "Gpu" | awk '{printf "%5.1f", $3}')
     fi
-	
-	echo "$gap GPU: $GpuLoad%% / $GpuTemp"
+    
+    echo "$gap GPU: $GpuLoad%% / $GpuTemp"
 }
 
 Volume() {
     Mute=$(pactl get-sink-mute @DEFAULT_SINK@)
     Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{printf "%3d", $5}')%
 
-	if [ "$Mute" = "Mute: yes" ] ; then
-		Vol="%{F$med}MUTE%{F$fg}"
-	fi
+    if [ "$Mute" = "Mute: yes" ] ; then
+        Vol="%{F$med}MUTE%{F$fg}"
+    fi
 
-	echo "$gap Vol: $Vol"
+    echo "$gap Vol: $Vol"
 }
 
 Battery() {
@@ -98,41 +98,41 @@ Brightness() {
 }
 
 Network() {
-	Con=$(nmcli dev status | grep -E "\b(wifi|ethernet)\b.*\bconnected\b")
+    Con=$(nmcli dev status | grep -E "\b(wifi|ethernet)\b.*\bconnected\b")
 
-	if [ -z "$Con" ] ; then
-		Int="wifi"
-		SSID="DISCONNECTED"
-		Col=$bad
+    if [ -z "$Con" ] ; then
+        Int="wifi"
+        SSID="NONE"
+        Col=$bad
         VPN=""
-	else
-		Int=$(echo $Con | awk '{print $2}')
-		SSID=$(echo $Con | awk '{print $4}')
-		Col=$good
+    else
+        Int=$(echo $Con | awk '{print $2}')
+        SSID=$(echo $Con | awk '{for(i=4;i<=NF;++i) printf "%s%s", $4, i==NF?"":" "}')
+        Col=$good
 
-		if [ $Int = "ethernet" ] ; then
-			Int="Eth"
-			Col=$med
-		fi
+        if [ $Int = "ethernet" ] ; then
+            Int="Eth"
+            Col=$med
+        fi
 
         if [ ! -z "$(nordvpn status | grep  "Status: Connected")" ]; then
-            VPN=" (%{F$neut}VPN%{F$fg})"
+            VPN="(%{F$neut}VPN%{F$fg})"
         else
-            VPN=" (%{F$bad}VPN%{F$fg})"
+            VPN="(%{F$bad}VPN%{F$fg})"
         fi
-	fi
+    fi
 
-	echo "$gap %{F$Col}$Int:%{F$fg} $SSID$VPN"
+    echo "$gap %{F$Col}$Int:%{F$fg} $SSID$VPN"
 }
 
 # Bar
 while true; do
-	bar="%{c} $(Clock) %{r}$(Network)$(CPU)$(RAM)$(GPU)$(Brightness)$(Volume)$(Battery) "
-	out=""
-	monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
-	for m in $(echo "$monitors") ; do
-		out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
-	done
-	echo "$out"
-	sleep 0.5
+    bar="%{c} $(Clock) %{r}$(Network)$(CPU)$(RAM)$(GPU)$(Brightness)$(Volume)$(Battery) "
+    out=""
+    monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
+    for m in $(echo "$monitors") ; do
+        out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
+    done
+    echo "$out"
+    sleep 0.5
 done | lemonbar -g "x25++" -B "$bg" -F "$fb"
