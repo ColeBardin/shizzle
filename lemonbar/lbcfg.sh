@@ -112,6 +112,7 @@ Network() {
 
         if [ $Int = "ethernet" ] ; then
             Int="Eth"
+            SSID="Wired"
             Col=$med
         fi
 
