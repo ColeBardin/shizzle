@@ -106,12 +106,12 @@ Network() {
         Col=$bad
         VPN=""
     else
+        Int=$(echo $Con | awk '{print $2}')
         if [ $Int = "ethernet" ] ; then
             Int="Eth"
             SSID="Wired"
             Col=$med
         else
-            Int=$(echo $Con | awk '{print $2}')
             SSID=$(nmcli dev wifi show | grep -i "SSID" | awk '{for(i=2;i<=NF;++i) printf "%s%s", $i, i==NF?"":" "}')
             Col=$good
         fi
