@@ -106,14 +106,14 @@ Network() {
         Col=$bad
         VPN=""
     else
-        Int=$(echo $Con | awk '{print $2}')
-        SSID=$(echo $Con | awk '{for(i=4;i<=NF;++i) printf "%s%s", $4, i==NF?"":" "}')
-        Col=$good
-
         if [ $Int = "ethernet" ] ; then
             Int="Eth"
             SSID="Wired"
             Col=$med
+        else
+            Int=$(echo $Con | awk '{print $2}')
+            SSID=$(nmcli dev wifi show | grep -i "SSID" | awk '{for(i=2;i<=NF;++i) printf "%s%s", $i, i==NF?"":" "}')
+            Col=$good
         fi
 
         if [ ! -z "$(nordvpn status | grep  "Status: Connected")" ]; then
