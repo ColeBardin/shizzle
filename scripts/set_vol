@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAXVOL=200
+MAXVOL=300
 
 if [ $# != 1 ]; then
     echo "Missing argument"
