@@ -41,6 +41,8 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id /usr/local/bin/set_vol +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id /usr/local/bin/set_vol -5% 
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle 
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle 
+# Print key takes screenshot
+bindsym Print exec /usr/bin/screengrab --region
 
 # use these keys for focus, movement, and resize directions when reaching for
 # the arrows is not convenient
@@ -207,7 +209,6 @@ bindsym $Mod+r mode "resize"
 #exec i3-config-wizard
 
 # Border config
-default_border pixel 1
 client.focused          #9a57a2 #5b2c61 #ffffff #5b2c61 #6e2871
 
 # Bind Brightness Keys
