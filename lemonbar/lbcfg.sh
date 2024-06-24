@@ -1,7 +1,7 @@
 #!/bin/sh
 
-bg="#102114"
-fg="#dbdbdb"
+bgc="#102114"
+fgc="#dbdbdb"
 bad="#ff0000"
 med="#ffcd05"
 good="#00ff08"
@@ -10,7 +10,7 @@ neut="#0390fc"
 gap="  "
 
 desktop="cputer"
-laptop="coltop"
+laptop="coltop2"
 
 WS() {
     ws=$(i3-msg -t get_workspaces)
@@ -20,7 +20,7 @@ WS() {
     out=""
     for n in $(echo "$nums") ; do
         if [ "$n" = "$cur" ] ; then
-            out+="%{F$neut}[$n]%{F$fg}"
+            out+="%{F$neut}[$n]%{F$fgc}"
         else
             out+=" $n "
         fi
@@ -65,7 +65,7 @@ Volume() {
     Vol=$(pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{printf "%3d", $5}')%
 
     if [ "$Mute" = "Mute: yes" ] ; then
-        Vol="%{F$med}MUTE%{F$fg}"
+        Vol="%{F$med}MUTE%{F$fgc}"
     fi
 
     echo "$gap Vol: $Vol"
@@ -74,16 +74,21 @@ Volume() {
 Battery() {
     if [ "$HOSTNAME" = "$laptop" ]; then
         Crg=$(acpi --battery | awk '{printf "%s", substr($3, 1, length($3)-1)}')
-        Bat=$(acpi --battery | grep -oE "...%" | head -c-1)
 
         if [ "$Crg" = "Discharging" ] ; then
+            Bat=$(acpi --battery | awk '{printf "%3d", substr($4, 1, length($4)-2)}')
             Crg="__"
             CrgColor=$bad
-        else
+        elif [ "$Crg" = "Charging" ]; then
+            Bat=$(acpi --battery | awk '{printf "%3d", substr($4, 1, length($4)-2)}')
             Crg="~~"
             CrgColor=$good
+        else
+            Bat=$(acpi --battery | awk '{printf "%3d", substr($4, 1, length($4)-1)}')
+            Crg="||"
+            CrgColor=$med
         fi
-        echo "$gap Bat: $Bat%%{F$CrgColor}$Crg%{F$fg}"
+        echo "$gap Bat: $Bat%%%{F$CrgColor}$Crg%{F$fgc}"
     fi
 }
 
@@ -117,13 +122,13 @@ Network() {
         fi
 
         if [ ! -z "$(nordvpn status | grep  "Status: Connected")" ]; then
-            VPN="(%{F$neut}VPN%{F$fg})"
+            VPN="(%{F$neut}VPN%{F$fgc})"
         else
-            VPN="(%{F$bad}VPN%{F$fg})"
+            VPN="(%{F$bad}VPN%{F$fgc})"
         fi
     fi
 
-    echo "$gap %{F$Col}$Int:%{F$fg} $SSID$VPN"
+    echo "$gap %{F$Col}$Int:%{F$fgc} $SSID$VPN"
 }
 
 # Bar
@@ -136,4 +141,5 @@ while true; do
     done
     echo "$out"
     sleep 0.5
-done | lemonbar -g "x25++" -B "$bg" -F "$fb"
+done | lemonbar -g "x25++" -B "$bgc" -F "$fgc"
+
