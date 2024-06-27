@@ -66,6 +66,9 @@ Volume() {
 
     if [ "$Mute" = "Mute: yes" ] ; then
         Vol="%{F$med}MUTE%{F$fgc}"
+        /usr/bin/xbacklight -ctrl platform::mute 100
+    else
+        /usr/bin/xbacklight -ctrl platform::mute 0
     fi
 
     echo "$gap Vol: $Vol"
@@ -83,6 +86,10 @@ Battery() {
             Bat=$(acpi --battery | awk '{printf "%3d", substr($4, 1, length($4)-2)}')
             Crg="~~"
             CrgColor=$good
+        elif [ "$Crg" = "No" ]; then
+            Bat=$(acpi --battery | awk '{printf "%3d", substr($5, 1, length($5)-1)}')
+            Crg="||"
+            CrgColor=$med
         else
             Bat=$(acpi --battery | awk '{printf "%3d", substr($4, 1, length($4)-1)}')
             Crg="||"
@@ -94,7 +101,7 @@ Battery() {
 
 Brightness() {
     if [ "$HOSTNAME" = "$laptop" ]; then
-        Bright=$(brightnessctl g | awk '{printf "%3d", 100 * $1 / 255}')
+        Bright=$(xbacklight -get | awk '{printf "%3d", $1}')
     else
         Bright=$(/usr/local/bin/bright | awk '{printf "%3d", $1}')
     fi

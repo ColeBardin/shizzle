@@ -37,8 +37,8 @@ font pango:DejaVu Sans Mono 10
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id /usr/local/bin/set_vol +5% 
-bindsym XF86AudioLowerVolume exec --no-startup-id /usr/local/bin/set_vol -5% 
+bindsym XF86AudioRaiseVolume exec --no-startup-id /usr/local/sbin/set_vol +5% 
+bindsym XF86AudioLowerVolume exec --no-startup-id /usr/local/sbin/set_vol -5% 
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle 
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle 
 # Print key takes screenshot
@@ -212,8 +212,8 @@ bindsym $Mod+r mode "resize"
 client.focused          #9a57a2 #5b2c61 #ffffff #5b2c61 #6e2871
 
 # Bind Brightness Keys
-bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl s 2%+ 
-bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl s 2%-
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 2
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 2 
 
 # Start LemonBar
 exec sh ~/.config/lemonbar/lbcfg.sh
