@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PACMD=/usr/bin/pacmd
+GREP=/usr/bin/grep
+SYSTEMCTL=/usr/bin/systemctl
+
+audio_streams=$($PACMD list-sink-inputs | $GREP -c "state: RUNNING")
+
+[[ $audio_streams -eq 0 ]] && $SYSTEMCTL suspend
