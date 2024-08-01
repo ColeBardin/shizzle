@@ -25,8 +25,8 @@ exec --no-startup-id xautolock -time 30 -locker /usr/local/bin/locker -detectsle
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id /usr/local/sbin/set_vol +5% 
-bindsym XF86AudioLowerVolume exec --no-startup-id /usr/local/sbin/set_vol -5% 
+bindsym XF86AudioRaiseVolume exec --no-startup-id /usr/local/bin/set_vol +5% 
+bindsym XF86AudioLowerVolume exec --no-startup-id /usr/local/bin/set_vol -5% 
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle 
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle 
 # Print key takes screenshot
