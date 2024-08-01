@@ -9,5 +9,5 @@ alias cunmount="udisksctl unmount -b"
 # NordVPN
 alias vpn="nordvpn"
 
-# Dimmer
-alias dim="xrandr --output eDP --brightness"
+# Faster sudo vim
+alias svim="sudo vim"
