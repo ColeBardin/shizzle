@@ -1,8 +1,7 @@
 #!/bin/sh
 
 bgc="#102114"
-fgc="#dbdbdb"
-bad="#ff0000"
+fgc="#dbdbdb" bad="#ff0000"
 med="#ffcd05"
 good="#00ff08"
 neut="#0390fc"
@@ -142,7 +141,7 @@ Network() {
 while true; do
     bar="%{c} $(Clock) %{r}$(Network)$(CPU)$(RAM)$(GPU)$(Brightness)$(Volume)$(Battery) "
     out=""
-    monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI).* connected" | sed "s/ connected//")
+    monitors=$(xrandr | grep -oE "^(DP|eDP|HDMI|HDMI-A).* connected" | sed "s/ connected//")
     for m in $(echo "$monitors") ; do
         out="$out%{Sn"$m"}%{l} $(WS "$m") $bar"
     done
